@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>three.js ar - cones</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<link type="text/css" rel="stylesheet" href="main.css">
+</head>
+
+<body>
+	<div id="info">
+		<a href="https://threejs.org" target="_blank" rel="noopener">three.js space model<br />(Chrome Android 81+)
+    </div>
+    <div id="overlay-ui">
+    </div>
+
+	<script type="module">
+
+		import * as THREE from '../threejs/three.module.js';
+		import { ARButton } from '../threejs/jsm/webxr/ARButton.js';
+        import { GLTFLoader } from '../threejs/jsm/loaders/GLTFLoader.js';
+        import { GUI } from '../threejs/jsm/libs/dat.gui.module.js';
+
+		let container;
+		let camera, scene, renderer;
+		let controller;
+        let loader;
+        let model;
+        
+        // our initial values for the GUI controller
+        const params = {
+            x: 0,
+            y: 0,
+            z: 0
+		};
+
+		init();
+		animate();
+
+		function init() {
+			container = document.createElement('div');
+			document.body.appendChild(container);
+
+			// All three.js scenes need three things: a scene, a camera, and a renderer
+			// For more info read: https://threejs.org/docs/#manual/en/introduction/Creating-a-scene
+
+			// #1 create the scene, although there's nothing in it just yet
+			scene = new THREE.Scene();
+
+            // #2 create the camera
+            // TODO: fix the camera far plane
+			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+
+			// #3 Pick a three.js renderer
+			renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.xr.enabled = true; // we have to enable the renderer for webxr
+			container.appendChild(renderer.domElement);
+
+			// Everything hereafter is optional things we want to add to the scene
+
+			// Add a light to the cene
+			var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+			light.position.set(0.5, 1, 0.25);
+			scene.add(light);
+
+			// Load the GLTF space model
+			loader = new GLTFLoader();
+			loader.load(
+				// resource URL
+				'../model/space.gltf', 
+				// onLoad callback: what get's called once the full model has loaded
+				(gltf) => {
+					model = gltf.scene;
+					scene.add(gltf.scene);
+				},
+				// onProgress callback: optional function for showing progress on model load
+				undefined,
+				// onError callback
+				(error) => {
+					console.error(error);
+				}
+            );
+            
+            // Add gui UI
+            const gui = new GUI();
+            gui.add( params, 'x', -20, 20).onChange((value) => {
+				// change the model's x position
+                model.position.x = value;
+            });
+            gui.add( params, 'y', -20, 20).onChange((value) => {
+				// change the model's y position
+                model.position.y = value;
+            });
+            gui.add( params, 'z', -50, 50).onChange((value) => {
+				// change the model's z position
+                model.position.z = value;
+            });
+            gui.open();
+
+            // Add an AR button to the window
+            // this time specifying we have a DOM overlay (the GUI UI)
+            document.body.appendChild( ARButton.createButton(renderer, {
+                optionalFeatures: [ 'dom-overlay' ],
+                domOverlay: { root: document.body }
+            }));
+            renderer.domElement.style.display = 'none'; // need to add this to see the UI
+
+			window.addEventListener('resize', onWindowResize, false);
+		}
+
+		function onWindowResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		}
+
+		// this function is only called one time
+		function animate() {
+			// here we set the render function to be called in a loop
+			renderer.setAnimationLoop(render);
+		}
+
+		// render function called on a loop every time the screen is refreshed
+		// which typically means 60 times a second (60 frames per second)
+		function render() {
+			renderer.render(scene, camera);
+		}
+
+	</script>
+</body>
+
+</html>
