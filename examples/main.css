@@ -52,7 +52,7 @@ a, button, input, select {
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	z-index: 2 !important; /* TODO Solve this in HTML */
+	z-index: 10000 !important; /* TODO Solve this in HTML */
 }
 
 #overlay {
