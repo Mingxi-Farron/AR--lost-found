@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>webxr - camera position</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="author" content="Irene Alvarado">
+	<link type="text/css" rel="stylesheet" href="main.css">
+</head>
+
+<body>
+	<div id="overlay-ui">
+	</div>
+	<div id="console-ui">
+	</div>
+	<script src="//cdn.jsdelivr.net/npm/eruda"></script>
+	<script>
+		eruda.init({ 
+			container: document.getElementById('console-ui')
+		});
+	</script>
+
+	<script type="module">
+
+		import * as THREE from '../threejs/three.module.js';
+		import { ARButton } from '../threejs/jsm/webxr/ARButton.js';
+		import { GLTFLoader } from '../threejs/jsm/loaders/GLTFLoader.js';
+		import { GUI } from '../threejs/jsm/libs/dat.gui.module.js';
+
+		let container;
+		let camera, scene, renderer;
+
+		init();
+		animate();
+
+		function init() {
+			container = document.createElement('div');
+			document.body.appendChild(container);
+
+			// All three.js scenes need three things: a scene, a camera, and a renderer
+			// For more info read: https://threejs.org/docs/#manual/en/introduction/Creating-a-scene
+
+			// #1 create the scene, although there's nothing in it just yet
+			scene = new THREE.Scene();
+
+			// #2 create the camera
+			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+
+			// #3 Pick a three.js renderer
+			renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.xr.enabled = true; // we have to enable the renderer for webxr
+			container.appendChild(renderer.domElement);
+
+			// Add an AR button to the window
+            // Specifying we have a DOM overlay (the GUI UI)
+            document.body.appendChild( ARButton.createButton(renderer, {
+                optionalFeatures: [ 'dom-overlay' ],
+                domOverlay: { root: document.body }
+            }));
+            renderer.domElement.style.display = 'none'; // need to add this to see the UI
+
+			window.addEventListener('resize', onWindowResize, false);
+
+			setInterval(logCameraPosition, 1000);
+			// setInterval(logCameraRotation, 1000);
+		}
+
+		function onWindowResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		}
+
+		// this function is only called one time
+		function animate() {
+			// here we set the render function to be called in a loop
+			renderer.setAnimationLoop(render);
+		}
+
+		// render function called on a loop every time the screen is refreshed
+		// which typically means 60 times a second (60 frames per second)
+		function render() {
+			renderer.render(scene, camera);
+		}
+
+		function logCameraPosition() {
+			const position = new THREE.Vector3();
+            position.setFromMatrixPosition(camera.matrixWorld);
+            console.log(position);
+		}
+
+		function logCameraRotation() {
+			const rotation = new THREE.Quaternion();
+            rotation.setFromRotationMatrix(camera.matrixWorld);
+			console.log(rotation);
+		}
+
+	</script>
+</body>
+
+</html>
