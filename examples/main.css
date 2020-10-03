@@ -94,3 +94,7 @@ a, button, input, select {
 	pointer-events: none;
 	height: 200px;
 }
+
+.eruda-container {
+	z-index: 1000000 !important
+}

@@ -13,8 +13,15 @@
     <div id="overlay-ui">
     </div>
 
+	<div id="console-ui">
+	</div>
 	<script src="//cdn.jsdelivr.net/npm/eruda"></script>
-	<script>eruda.init();</script>
+	<script>
+		eruda.init({ 
+			container: document.getElementById('console-ui')
+		});
+	</script>
+	
 	<script type="module">
 
 		import * as THREE from '../threejs/three.module.js';
