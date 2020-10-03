@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>webxr - model animation</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<meta name="author" content="Irene Alvarado">
+	<link type="text/css" rel="stylesheet" href="main.css">
+</head>
+
+<body>
+	<div id="info">
+		<a href="https://threejs.org" target="_blank" rel="noopener">three.js space model<br />(Chrome Android 81+)
+	</div>
+
+	<!-- <script src="//cdn.jsdelivr.net/npm/eruda"></script>
+	<script>eruda.init();</script> -->
+	<script type="module">
+		// model from: https://sketchfab.com/3d-models/simple-spotted-jellyfish-baked-animation-d5006697ad3c4bc1ac814110cde19af2
+
+		import * as THREE from '../threejs/three.module.js';
+		import { ARButton } from '../threejs/jsm/webxr/ARButton.js';
+		import { GLTFLoader } from '../threejs/jsm/loaders/GLTFLoader.js';
+
+		let container;
+		let camera, scene, renderer;
+		let controller;
+		let loader;
+        let model;
+        let mixer;
+		const clock = new THREE.Clock();
+
+		init();
+		animate();
+
+		function init() {
+			container = document.createElement('div');
+			document.body.appendChild(container);
+
+			scene = new THREE.Scene();
+
+			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+
+			renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			// renderer.outputEncoding = THREE.sRGBEncoding;
+			renderer.xr.enabled = true; // we have to enable the renderer for webxr
+			container.appendChild(renderer.domElement);
+
+			// Add a light to the cene
+			var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+			light.position.set(0.5, 1, 0.25);
+			scene.add(light);
+
+			// load the model texture
+			const textureLoader = new THREE.TextureLoader();
+			const texture = textureLoader.load( "../model/Spotted-Jelly.png");
+			// read more about why we need these settings here
+			// https://threejs.org/docs/#examples/en/loaders/GLTFLoader
+			texture.encoding = THREE.sRGBEncoding;
+			texture.flipY = false;
+
+			// Load the GLTF model
+			loader = new GLTFLoader();
+			loader.load(
+				'../model/Spotted-Jelly.gltf', 
+				// onLoad callback: what get's called once the full model has loaded
+				(gltf) => {
+                    model = gltf.scene;
+					model.position.z = -3; // change the z position a bit
+					addTextureToModel(texture); // add a texture to the model
+
+					// setup the model animation
+					// read more about animation here: 
+					// https://threejs.org/docs/#manual/en/introduction/Animation-system
+                    // a mixer object controls the actual playback of the animation
+					mixer = new THREE.AnimationMixer(gltf.scene);
+					// the gltf animations array contains animtation clips for the model
+					gltf.animations.forEach((clip) => {
+                        const action = mixer.clipAction(clip);
+                        action.play(); // start playing each animation clip
+					});
+
+					scene.add(gltf.scene);
+				},
+				// onProgress callback: optional function for showing progress on model load
+				undefined,
+				// onError callback
+				(error) => {
+					console.error(error);
+				}
+			);
+
+			document.body.appendChild(ARButton.createButton(renderer));
+
+			window.addEventListener('resize', onWindowResize, false);
+		}
+
+		function onWindowResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		}
+
+		// this function is only called one time
+		function animate() {
+			// here we set the render function to be called in a loop
+			renderer.setAnimationLoop(render);
+		}
+
+		// render function called on a loop every time the screen is refreshed
+		// which typically means 60 times a second (60 frames per second)
+		function render() {
+            const delta = clock.getDelta();
+			if (mixer){
+				// Update the animation mixer on each frame
+				mixer.update(delta);
+			}
+
+			renderer.render(scene, camera);
+		}
+
+        function scaleGroup(parentModel, scale) {
+			for (const child of parentModel.children) {
+				if (child.type === 'Group') {
+					scaleGroup(child, scale);
+				} else {
+					console.log(child);
+					child.scale.set(scale, scale, scale);
+				}
+			}
+		}
+
+		function addTextureToModel(textureToAdd) {
+			model.traverse((child) => {
+				if (child instanceof THREE.Mesh) {
+					child.material.map = textureToAdd;
+
+					// Probably need the lines below if you will change the texture after 
+					// the model has been added to the scene
+					// child.material.needsUpdate = true;
+					// child.material.map.needsUpdate = true;
+				}
+			});
+		}
+
+	</script>
+</body>
+
+</html>
