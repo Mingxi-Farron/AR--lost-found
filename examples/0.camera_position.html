@@ -14,6 +14,7 @@
 	</div>
 	<div id="console-ui">
 	</div>
+  
 	<script src="//cdn.jsdelivr.net/npm/eruda"></script>
 	<script>
 		eruda.init({ 
@@ -64,8 +65,8 @@
 
 			window.addEventListener('resize', onWindowResize, false);
 
-			// setInterval(logCameraPosition, 1000);
-			setInterval(logCameraRotation, 1000);
+			setInterval(logCameraPosition, 1000);
+			// setInterval(logCameraRotation, 1000);
 		}
 
 		function onWindowResize() {
