@@ -64,8 +64,8 @@
 
 			window.addEventListener('resize', onWindowResize, false);
 
-			setInterval(logCameraPosition, 1000);
-			// setInterval(logCameraRotation, 1000);
+			// setInterval(logCameraPosition, 1000);
+			setInterval(logCameraRotation, 1000);
 		}
 
 		function onWindowResize() {
@@ -89,13 +89,13 @@
 
 		function logCameraPosition() {
 			const position = new THREE.Vector3();
-            position.setFromMatrixPosition(camera.matrixWorld);
-            console.log(position);
+      position.setFromMatrixPosition(camera.matrixWorld); // x, y, z
+      console.log(position); // x, y, z
 		}
 
 		function logCameraRotation() {
 			const rotation = new THREE.Quaternion();
-            rotation.setFromRotationMatrix(camera.matrixWorld);
+      rotation.setFromRotationMatrix(camera.matrixWorld);
 			console.log(rotation);
 		}
 
