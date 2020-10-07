@@ -25,8 +25,8 @@
 
 		import * as THREE from '../threejs/three.module.js';
 		import { ARButton } from '../threejs/jsm/webxr/ARButton.js';
-        import { GLTFLoader } from '../threejs/jsm/loaders/GLTFLoader.js';
-        import { GUI } from '../threejs/jsm/libs/dat.gui.module.js';
+    import { GLTFLoader } from '../threejs/jsm/loaders/GLTFLoader.js';
+    import { GUI } from '../threejs/jsm/libs/dat.gui.module.js';
 
 		let container;
 		let camera, scene, renderer;
@@ -34,11 +34,11 @@
         let loader;
         let model;
         
-        // our initial values for the GUI controller
-        const params = {
-            x: 0,
-            y: 0,
-            z: 0
+    // our initial values for the GUI controller
+    const params = {
+        x: 0,
+        y: 0,
+        z: 0
 		};
 
 		init();
@@ -90,29 +90,29 @@
 				}
             );
             
-            // Add gui UI
-            const gui = new GUI();
-            gui.add( params, 'x', -20, 20).onChange((value) => {
+        // Add gui UI
+        const gui = new GUI();
+        gui.add( params, 'x', -20, 20).onChange((value) => {
 				// change the model's x position
-                model.position.x = value;
-            });
-            gui.add( params, 'y', -20, 20).onChange((value) => {
-				// change the model's y position
-                model.position.y = value;
-            });
-            gui.add( params, 'z', -50, 50).onChange((value) => {
+            model.position.x = value;
+        });
+        gui.add( params, 'y', -20, 20).onChange((value) => {
+        // change the model's y position
+            model.position.y = value;
+        });
+        gui.add( params, 'z', -50, 50).onChange((value) => {
 				// change the model's z position
-                model.position.z = value;
-            });
-            gui.open();
+            model.position.z = value;
+        });
+        gui.open();
 
-            // Add an AR button to the window
-            // this time specifying we have a DOM overlay (the GUI UI)
-            document.body.appendChild( ARButton.createButton(renderer, {
-                optionalFeatures: [ 'dom-overlay' ],
-                domOverlay: { root: document.body }
-            }));
-            renderer.domElement.style.display = 'none'; // need to add this to see the UI
+        // Add an AR button to the window
+        // this time specifying we have a DOM overlay (the GUI UI)
+        document.body.appendChild( ARButton.createButton(renderer, {
+            optionalFeatures: [ 'dom-overlay' ],
+            domOverlay: { root: document.body }
+        }));
+        renderer.domElement.style.display = 'none'; // need to add this to see the UI
 
 			window.addEventListener('resize', onWindowResize, false);
 		}
