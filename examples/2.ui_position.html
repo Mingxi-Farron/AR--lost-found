@@ -54,9 +54,9 @@
 			// #1 create the scene, although there's nothing in it just yet
 			scene = new THREE.Scene();
 
-            // #2 create the camera
-            // TODO: fix the camera far plane
-			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+      // #2 create the camera
+      // TODO: fix the camera far plane
+			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 200);
 
 			// #3 Pick a three.js renderer
 			renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
