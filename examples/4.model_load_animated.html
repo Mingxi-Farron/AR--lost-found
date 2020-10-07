@@ -74,20 +74,21 @@
 				'../model/Spotted-Jelly.gltf', 
 				// onLoad callback: what get's called once the full model has loaded
 				(gltf) => {
-                    model = gltf.scene;
+          model = gltf.scene;
 					model.position.z = -3; // change the z position a bit
 					addTextureToModel(texture); // add a texture to the model
 
-					// setup the model animation
-					// read more about animation here: 
-					// https://threejs.org/docs/#manual/en/introduction/Animation-system
-                    // a mixer object controls the actual playback of the animation
-					mixer = new THREE.AnimationMixer(gltf.scene);
-					// the gltf animations array contains animtation clips for the model
-					gltf.animations.forEach((clip) => {
-                        const action = mixer.clipAction(clip);
-                        action.play(); // start playing each animation clip
-					});
+            // setup the model animation
+            // read more about animation here: 
+            // https://threejs.org/docs/#manual/en/introduction/Animation-system
+            // a mixer object controls the actual playback of the animation
+            mixer = new THREE.AnimationMixer(gltf.scene);
+            // the gltf animations array contains animtation clips for the model
+            console.log(gltf.animations);
+            gltf.animations.forEach((clip) => {
+              const action = mixer.clipAction(clip);
+              action.play(); // start playing each animation clip
+					  });
 
 					scene.add(gltf.scene);
 				},
@@ -124,7 +125,7 @@
 		// render function called on a loop every time the screen is refreshed
 		// which typically means 60 times a second (60 frames per second)
 		function render() {
-            const delta = clock.getDelta();
+			const delta = clock.getDelta();
 			if (mixer){
 				// Update the animation mixer on each frame
 				mixer.update(delta);
