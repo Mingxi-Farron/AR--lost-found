@@ -35,10 +35,10 @@
         let model;
         
         // our initial values for the GUI controller
-        const params = {
-            x: 0,
-            y: 0,
-            z: 0,
+  const params = {
+      x: 0,
+      y: 0,
+      z: 0,
 			scale: 1
 		};
 
@@ -104,16 +104,16 @@
             });
             gui.add( params, 'z', -200, 200).onChange((value) => {
 				// change the model's z position
-                model.position.z = value;
+              model.position.z = value;
             });
-			gui.add( params, 'scale', -6.0, 6.0).onChange((value) => {
-				// change the model's scale
-				// TODO: try to figure out why this doesn't work?
-				model.scale.set(value, value, value);
+			  gui.add( params, 'scale', -6.0, 6.0).onChange((value) => {
+          // change the model's scale
+          // TODO: try to figure out why this doesn't work?
+				  // model.scale.set(value, value, value);
 
-				// TODO: This does work, uncomment to try
-				// scaleGroup(model, value);
-            });
+          // TODO: This does work, uncomment to try
+          scaleGroup(model, value);
+        });
             gui.open();
 
             // Add an AR button to the window
