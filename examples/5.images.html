@@ -10,29 +10,29 @@
 </head>
 
 <body>
-    <div id="overlay-ui">
-    </div>
+	<div id="overlay-ui">
+	</div>
 
 	<div id="console-ui">
 	</div>
 	<script src="//cdn.jsdelivr.net/npm/eruda"></script>
 	<script>
-		eruda.init({ 
+		eruda.init({
 			container: document.getElementById('console-ui')
 		});
 	</script>
-	
+
 	<script type="module">
 
 		import * as THREE from '../threejs/three.module.js';
 		import { ARButton } from '../threejs/jsm/webxr/ARButton.js';
-        import { GLTFLoader } from '../threejs/jsm/loaders/GLTFLoader.js';
+		import { GLTFLoader } from '../threejs/jsm/loaders/GLTFLoader.js';
 
 		let container;
 		let camera, scene, renderer;
 		let controller;
-        let loader;
-        let model;
+		let loader;
+		let model;
 
 		init();
 		animate();
@@ -54,21 +54,21 @@
 			light.position.set(0.5, 1, 0.25);
 			scene.add(light);
 
-            // load an image
-            const firstImageMesh = createMeshWithImage('../model/cat.jpg');
-            firstImageMesh.position.set(-0.25,0,-1);
-            scene.add(firstImageMesh); // add the mesh (aka. image) to the scene
+			// load an image
+			const firstImageMesh = createMeshWithImage('../model/cat.jpg');
+			firstImageMesh.position.set(-0.25, 0, -1);
+			scene.add(firstImageMesh); // add the mesh (aka. image) to the scene
 
-            // load a transparent image
-            const secondImageMesh = createMeshWithImage('../model/cat_transparent.png');
-            secondImageMesh.position.set(0.25,0,-1);
-            scene.add(secondImageMesh);
+			// load a transparent image
+			const secondImageMesh = createMeshWithImage('../model/cat_transparent.png');
+			secondImageMesh.position.set(0.25, 0, -1);
+			scene.add(secondImageMesh);
 
-            document.body.appendChild( ARButton.createButton(renderer, {
-                optionalFeatures: [ 'dom-overlay' ],
-                domOverlay: { root: document.body }
-            }));
-            renderer.domElement.style.display = 'none'; // need to add this to see the UI
+			document.body.appendChild(ARButton.createButton(renderer, {
+				optionalFeatures: ['dom-overlay'],
+				domOverlay: { root: document.body }
+			}));
+			renderer.domElement.style.display = 'none'; // need to add this to see the UI
 
 			window.addEventListener('resize', onWindowResize, false);
 		}
@@ -88,24 +88,24 @@
 			renderer.render(scene, camera);
 		}
 
-        function createMeshWithImage(imagePath) {
-            // create a texture loader and a material
-            const loader = new THREE.TextureLoader();
-            const material = new THREE.MeshLambertMaterial({
-                map: loader.load(imagePath),
-                side: THREE.DoubleSide // comment if you only want one side
-            });
+		function createMeshWithImage(imagePath) {
+			// create a texture loader and a material
+			const loader = new THREE.TextureLoader();
+			const material = new THREE.MeshLambertMaterial({
+				map: loader.load(imagePath),
+				side: THREE.DoubleSide // comment if you only want one side
+			});
 
-            // create a plane gemetry with width = 0.5 and height = 0.5
-            // if your image is not square you need to edit these numbers
-            // to maintain the aspect ratio
-            const geometry = new THREE.PlaneGeometry(0.5, 0.5);
+			// create a plane gemetry with width = 0.5 and height = 0.5
+			// if your image is not square you need to edit these numbers
+			// to maintain the aspect ratio
+			const geometry = new THREE.PlaneGeometry(0.5, 0.5);
 
-            // create a 3D mesh which requires a gemetry and texture
-            const mesh = new THREE.Mesh(geometry, material);
+			// create a 3D mesh which requires a gemetry and texture
+			const mesh = new THREE.Mesh(geometry, material);
 
-            return mesh;
-        }
+			return mesh;
+		}
 	</script>
 </body>
 

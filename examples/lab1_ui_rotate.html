@@ -10,14 +10,14 @@
 </head>
 
 <body>
-    <div id="overlay-ui">
-    </div>
+	<div id="overlay-ui">
+	</div>
 
 	<div id="console-ui">
 	</div>
 	<script src="//cdn.jsdelivr.net/npm/eruda"></script>
 	<script>
-		eruda.init({ 
+		eruda.init({
 			container: document.getElementById('console-ui')
 		});
 	</script>
@@ -26,24 +26,24 @@
 
 		import * as THREE from '../threejs/three.module.js';
 		import { ARButton } from '../threejs/jsm/webxr/ARButton.js';
-        import { GLTFLoader } from '../threejs/jsm/loaders/GLTFLoader.js';
-        import { GUI } from '../threejs/jsm/libs/dat.gui.module.js';
+		import { GLTFLoader } from '../threejs/jsm/loaders/GLTFLoader.js';
+		import { GUI } from '../threejs/jsm/libs/dat.gui.module.js';
 
 		let container;
 		let camera, scene, renderer;
 		let controller;
-        let loader;
-        let model;
-        
-        // our initial values for the GUI controller
-        const params = {
-            x: 0,
-            y: 0,
-            z: 0,
+		let loader;
+		let model;
+
+		// our initial values for the GUI controller
+		const params = {
+			x: 0,
+			y: 0,
+			z: 0,
 			scale: 1,
-            rotX: 0, // new parameter for rotation over the x axis
-            rotY: 0, // new parameter for rotation over the y axis
-            rotZ: 0 // new parameter for rotation over the z axis
+			rotX: 0, // new parameter for rotation over the x axis
+			rotY: 0, // new parameter for rotation over the y axis
+			rotZ: 0 // new parameter for rotation over the z axis
 		};
 
 		init();
@@ -69,7 +69,7 @@
 
 			loader = new GLTFLoader();
 			loader.load(
-				'../model/space.gltf', 
+				'../model/space.gltf',
 				(gltf) => {
 					model = gltf.scene;
 					scene.add(gltf.scene);
@@ -79,21 +79,21 @@
 				(error) => {
 					console.error(error);
 				}
-            );
-            
-            const gui = new GUI();
-            gui.add( params, 'x', -20, 20).onChange((value) => {
-                model.position.x = value;
-            });
-            gui.add( params, 'y', -20, 20).onChange((value) => {
-                model.position.y = value;
-            });
-            gui.add( params, 'z', -200, 200).onChange((value) => {
-                model.position.z = value;
-            });
-			gui.add( params, 'scale', -6.0, 6.0).onChange((value) => {
+			);
+
+			const gui = new GUI();
+			gui.add(params, 'x', -20, 20).onChange((value) => {
+				model.position.x = value;
+			});
+			gui.add(params, 'y', -20, 20).onChange((value) => {
+				model.position.y = value;
+			});
+			gui.add(params, 'z', -200, 200).onChange((value) => {
+				model.position.z = value;
+			});
+			gui.add(params, 'scale', -6.0, 6.0).onChange((value) => {
 				scaleGroup(model, value);
-            });
+			});
 
 			// Lab 1: Your homework will be to figure out how to add 
 			// rotation to the model on the x, y, and z axis
@@ -106,28 +106,28 @@
 
 			// Tips:
 			// a. Check out the function THREE.Math.degToRad
-        	// https://threejs.org/docs/#api/en/math/MathUtils.degToRad
+			// https://threejs.org/docs/#api/en/math/MathUtils.degToRad
 			// b. degrees run from 0-360
 			// radians run from 0 - 2π = 0 - ~6.28
 			// c. our GUI values will run from 0 to 360 in degrees, but you have to somehow 
 			// convert to radians and give that value to the model
-			
-            gui.add(params, 'rotX', 0, 360).onChange((value) => {
-				// TODO: add code to rotate model on x
-            });
-            gui.add(params, 'rotY', 0, 360).onChange((value) => {
-                // TODO: add code to rotate model on y
-            });
-            gui.add(params, 'rotZ', 0, 360).onChange((value) => {
-                // TODO: add code to rotate model on z
-            });
-            gui.open();
 
-            document.body.appendChild( ARButton.createButton(renderer, {
-                optionalFeatures: [ 'dom-overlay' ],
-                domOverlay: { root: document.body }
-            }));
-            renderer.domElement.style.display = 'none'; // need to add this to see the UI
+			gui.add(params, 'rotX', 0, 360).onChange((value) => {
+				// TODO: add code to rotate model on x
+			});
+			gui.add(params, 'rotY', 0, 360).onChange((value) => {
+				// TODO: add code to rotate model on y
+			});
+			gui.add(params, 'rotZ', 0, 360).onChange((value) => {
+				// TODO: add code to rotate model on z
+			});
+			gui.open();
+
+			document.body.appendChild(ARButton.createButton(renderer, {
+				optionalFeatures: ['dom-overlay'],
+				domOverlay: { root: document.body }
+			}));
+			renderer.domElement.style.display = 'none'; // need to add this to see the UI
 
 			window.addEventListener('resize', onWindowResize, false);
 		}

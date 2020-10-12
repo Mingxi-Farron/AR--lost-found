@@ -11,13 +11,13 @@
 
 <body>
 	<div id="overlay-ui">
-    </div>
+	</div>
 
 	<div id="console-ui">
 	</div>
 	<script src="//cdn.jsdelivr.net/npm/eruda"></script>
 	<script>
-		eruda.init({ 
+		eruda.init({
 			container: document.getElementById('console-ui')
 		});
 	</script>
@@ -33,8 +33,8 @@
 		let camera, scene, renderer;
 		let controller;
 		let loader;
-        let model;
-        let mixer;
+		let model;
+		let mixer;
 		const clock = new THREE.Clock();
 
 		init();
@@ -62,7 +62,7 @@
 
 			// load the model texture
 			const textureLoader = new THREE.TextureLoader();
-			const texture = textureLoader.load( "../model/Spotted-Jelly.png");
+			const texture = textureLoader.load("../model/Spotted-Jelly.png");
 			// read more about why we need these settings here
 			// https://threejs.org/docs/#examples/en/loaders/GLTFLoader
 			texture.encoding = THREE.sRGBEncoding;
@@ -71,24 +71,24 @@
 			// Load the GLTF model
 			loader = new GLTFLoader();
 			loader.load(
-				'../model/Spotted-Jelly.gltf', 
+				'../model/Spotted-Jelly.gltf',
 				// onLoad callback: what get's called once the full model has loaded
 				(gltf) => {
-          model = gltf.scene;
+					model = gltf.scene;
 					model.position.z = -3; // change the z position a bit
 					addTextureToModel(texture); // add a texture to the model
 
-            // setup the model animation
-            // read more about animation here: 
-            // https://threejs.org/docs/#manual/en/introduction/Animation-system
-            // a mixer object controls the actual playback of the animation
-            mixer = new THREE.AnimationMixer(gltf.scene);
-            // the gltf animations array contains animtation clips for the model
-            console.log(gltf.animations);
-            gltf.animations.forEach((clip) => {
-              const action = mixer.clipAction(clip);
-              action.play(); // start playing each animation clip
-					  });
+					// setup the model animation
+					// read more about animation here: 
+					// https://threejs.org/docs/#manual/en/introduction/Animation-system
+					// a mixer object controls the actual playback of the animation
+					mixer = new THREE.AnimationMixer(gltf.scene);
+					// the gltf animations array contains animtation clips for the model
+					console.log(gltf.animations);
+					gltf.animations.forEach((clip) => {
+						const action = mixer.clipAction(clip);
+						action.play(); // start playing each animation clip
+					});
 
 					scene.add(gltf.scene);
 				},
@@ -100,11 +100,11 @@
 				}
 			);
 
-            document.body.appendChild( ARButton.createButton(renderer, {
-                optionalFeatures: [ 'dom-overlay' ],
-                domOverlay: { root: document.body }
-            }));
-            renderer.domElement.style.display = 'none'; // need to add this to see the UI
+			document.body.appendChild(ARButton.createButton(renderer, {
+				optionalFeatures: ['dom-overlay'],
+				domOverlay: { root: document.body }
+			}));
+			renderer.domElement.style.display = 'none'; // need to add this to see the UI
 
 			window.addEventListener('resize', onWindowResize, false);
 		}
@@ -126,7 +126,7 @@
 		// which typically means 60 times a second (60 frames per second)
 		function render() {
 			const delta = clock.getDelta();
-			if (mixer){
+			if (mixer) {
 				// Update the animation mixer on each frame
 				mixer.update(delta);
 			}
@@ -134,7 +134,7 @@
 			renderer.render(scene, camera);
 		}
 
-        function scaleGroup(parentModel, scale) {
+		function scaleGroup(parentModel, scale) {
 			for (const child of parentModel.children) {
 				if (child.type === 'Group') {
 					scaleGroup(child, scale);

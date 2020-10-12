@@ -10,13 +10,13 @@
 </head>
 
 <body>
-    <div id="overlay-ui">
+	<div id="overlay-ui">
 	</div>
 	<div id="console-ui">
 	</div>
 	<script src="//cdn.jsdelivr.net/npm/eruda"></script>
 	<script>
-		eruda.init({ 
+		eruda.init({
 			container: document.getElementById('console-ui')
 		});
 	</script>
@@ -25,20 +25,20 @@
 
 		import * as THREE from '../threejs/three.module.js';
 		import { ARButton } from '../threejs/jsm/webxr/ARButton.js';
-        import { GLTFLoader } from '../threejs/jsm/loaders/GLTFLoader.js';
-        import { GUI } from '../threejs/jsm/libs/dat.gui.module.js';
+		import { GLTFLoader } from '../threejs/jsm/loaders/GLTFLoader.js';
+		import { GUI } from '../threejs/jsm/libs/dat.gui.module.js';
 
 		let container;
 		let camera, scene, renderer;
 		let controller;
-        let loader;
-        let model;
-        
-        // our initial values for the GUI controller
-  const params = {
-      x: 0,
-      y: 0,
-      z: 0,
+		let loader;
+		let model;
+
+		// our initial values for the GUI controller
+		const params = {
+			x: 0,
+			y: 0,
+			z: 0,
 			scale: 1
 		};
 
@@ -55,8 +55,8 @@
 			// #1 create the scene, although there's nothing in it just yet
 			scene = new THREE.Scene();
 
-            // #2 create the camera
-            // notice the camera far plane is much larger now
+			// #2 create the camera
+			// notice the camera far plane is much larger now
 			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 200);
 
 			// #3 Pick a three.js renderer
@@ -77,7 +77,7 @@
 			loader = new GLTFLoader();
 			loader.load(
 				// resource URL
-				'../model/space.gltf', 
+				'../model/space.gltf',
 				// onLoad callback: what get's called once the full model has loaded
 				(gltf) => {
 					model = gltf.scene;
@@ -90,39 +90,39 @@
 				(error) => {
 					console.error(error);
 				}
-            );
-            
-            // Add gui UI
-            const gui = new GUI();
-            gui.add( params, 'x', -20, 20).onChange((value) => {
+			);
+
+			// Add gui UI
+			const gui = new GUI();
+			gui.add(params, 'x', -20, 20).onChange((value) => {
 				// change the model's x position
-                model.position.x = value;
-            });
-            gui.add( params, 'y', -20, 20).onChange((value) => {
+				model.position.x = value;
+			});
+			gui.add(params, 'y', -20, 20).onChange((value) => {
 				// change the model's y position
-                model.position.y = value;
-            });
-            gui.add( params, 'z', -200, 200).onChange((value) => {
+				model.position.y = value;
+			});
+			gui.add(params, 'z', -200, 200).onChange((value) => {
 				// change the model's z position
-              model.position.z = value;
-            });
-			  gui.add( params, 'scale', -6.0, 6.0).onChange((value) => {
-          // change the model's scale
-          // TODO: try to figure out why this doesn't work?
-				  // model.scale.set(value, value, value);
+				model.position.z = value;
+			});
+			gui.add(params, 'scale', -6.0, 6.0).onChange((value) => {
+				// change the model's scale
+				// TODO: try to figure out why this doesn't work?
+				// model.scale.set(value, value, value);
 
-          // TODO: This does work, uncomment to try
-          scaleGroup(model, value);
-        });
-            gui.open();
+				// TODO: This does work, uncomment to try
+				scaleGroup(model, value);
+			});
+			gui.open();
 
-            // Add an AR button to the window
-            // this time specifying we have a DOM overlay (the GUI UI)
-            document.body.appendChild( ARButton.createButton(renderer, {
-                optionalFeatures: [ 'dom-overlay' ],
-                domOverlay: { root: document.body }
-            }));
-            renderer.domElement.style.display = 'none'; // need to add this to see the UI
+			// Add an AR button to the window
+			// this time specifying we have a DOM overlay (the GUI UI)
+			document.body.appendChild(ARButton.createButton(renderer, {
+				optionalFeatures: ['dom-overlay'],
+				domOverlay: { root: document.body }
+			}));
+			renderer.domElement.style.display = 'none'; // need to add this to see the UI
 
 			window.addEventListener('resize', onWindowResize, false);
 		}

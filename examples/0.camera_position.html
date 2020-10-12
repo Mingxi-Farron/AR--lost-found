@@ -14,10 +14,10 @@
 	</div>
 	<div id="console-ui">
 	</div>
-  
+
 	<script src="//cdn.jsdelivr.net/npm/eruda"></script>
 	<script>
-		eruda.init({ 
+		eruda.init({
 			container: document.getElementById('console-ui')
 		});
 	</script>
@@ -56,12 +56,12 @@
 			container.appendChild(renderer.domElement);
 
 			// Add an AR button to the window
-      // Specifying we have a DOM overlay (the GUI UI)
-      document.body.appendChild( ARButton.createButton(renderer, {
-          optionalFeatures: [ 'dom-overlay' ],
-          domOverlay: { root: document.body }
-      }));
-      renderer.domElement.style.display = 'none'; // need to add this to see the UI
+			// Specifying we have a DOM overlay (the GUI UI)
+			document.body.appendChild(ARButton.createButton(renderer, {
+				optionalFeatures: ['dom-overlay'],
+				domOverlay: { root: document.body }
+			}));
+			renderer.domElement.style.display = 'none'; // need to add this to see the UI
 
 			window.addEventListener('resize', onWindowResize, false);
 
@@ -90,13 +90,13 @@
 
 		function logCameraPosition() {
 			const position = new THREE.Vector3();
-      position.setFromMatrixPosition(camera.matrixWorld); // x, y, z
-      console.log(position); // x, y, z
+			position.setFromMatrixPosition(camera.matrixWorld); // x, y, z
+			console.log(position); // x, y, z
 		}
 
 		function logCameraRotation() {
 			const rotation = new THREE.Quaternion();
-      rotation.setFromRotationMatrix(camera.matrixWorld);
+			rotation.setFromRotationMatrix(camera.matrixWorld);
 			console.log(rotation);
 		}
 
