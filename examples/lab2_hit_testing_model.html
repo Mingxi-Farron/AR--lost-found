@@ -66,23 +66,28 @@
             // texture if it requires it. Some models load their textures automatically)
 
             // TODO: load your desired model
-			loader = new GLTFLoader();
-			loader.load(
-				'../model/YOUR_MODEL',
-				(gltf) => {
+            loader = new GLTFLoader();
+            loader.load(
+                '../model/YOUR_MODEL',
+                (gltf) => {
                     model = gltf.scene;
+
+                    // HINT if you want to load the model the first time and set it's visibility to true
+                    // you can do it just to test that the model is loading correctly. You can also use
+                    // the three.js editor to check the model's default position in the scene
+                    // https://threejs.org/editor/
 
                     // TODO: set the model visibility to false
                     // one line of code
 
                     // TODO: add the model to the scene (will be invisible)
                     // one line of code
-				},
-				undefined,
-				(error) => {
-					console.error(error);
-				}
-			);
+                },
+                undefined,
+                (error) => {
+                    console.error(error);
+                }
+            );
 
             controller = renderer.xr.getController(0);
             controller.addEventListener('select', onSelect);
