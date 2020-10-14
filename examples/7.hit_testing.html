@@ -110,8 +110,8 @@
 
                 // 1. create a hit test source
                 // create a XRHitTestSource based on the viewer space
-                session.requestReferenceSpace('viewer').then((viewerSpace) => {
-                    session.requestHitTestSource({ space: viewerSpace }).then((source) => {
+                session.requestReferenceSpace('viewer').then((referenceSpace) => {
+                    session.requestHitTestSource({ space: referenceSpace }).then((source) => {
                         hitTestSource = source; // XRHitTestSource
                     });
                 });
