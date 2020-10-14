@@ -139,27 +139,27 @@
             renderer.setAnimationLoop(render);
         }
 
-        
+
         let hitTestSource = null;
-        let hitTestSourceInitialized = false;  
-      
+        let hitTestSourceInitialized = false;
+
         function render(timestamp, frame) {
             if (frame) {
                 const session = renderer.xr.getSession();
 
                 if (hitTestSourceInitialized === false) {
-                  session.requestReferenceSpace('viewer').then((viewerSpace) => {
-                      session.requestHitTestSource({ space: viewerSpace }).then((source) => {
-                          hitTestSource = source; // XRHitTestSource
-                      });
-                  });
-                  
-                  session.addEventListener('end', () => {
-                      hitTestSourceInitialized = false;
-                      hitTestSource = null;
-                  });
-                  
-                  hitTestSourceInitialized = true;
+                    session.requestReferenceSpace('viewer').then((viewerSpace) => {
+                        session.requestHitTestSource({ space: viewerSpace }).then((source) => {
+                            hitTestSource = source; // XRHitTestSource
+                        });
+                    });
+
+                    session.addEventListener('end', () => {
+                        hitTestSourceInitialized = false;
+                        hitTestSource = null;
+                    });
+
+                    hitTestSourceInitialized = true;
                 }
 
                 if (hitTestSource !== null) {

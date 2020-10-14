@@ -14,7 +14,7 @@
     </div>
     <div id="console-ui">
     </div>
-<!--     <script src="//cdn.jsdelivr.net/npm/eruda"></script>
+    <!--     <script src="//cdn.jsdelivr.net/npm/eruda"></script>
     <script>
       eruda.init({
         container: document.getElementById('console-ui')
@@ -108,21 +108,21 @@
                 // 1. create a hit test source once and keep it for all the frames
                 // create a XRHitTestSource based on the viewer space
                 if (hitTestSourceInitialized === false) {
-                  session.requestReferenceSpace('viewer').then((viewerSpace) => {
-                      session.requestHitTestSource({ space: viewerSpace }).then((source) => {
-                          hitTestSource = source; // XRHitTestSource
-                      });
-                  });
-                  
-                  session.addEventListener('end', () => {
-                      hitTestSourceInitialized = false;
-                      hitTestSource = null;
-                  });
-                  
-                  // set this to true so we don't request another hit source for the rest of the session
-                  hitTestSourceInitialized = true;
+                    session.requestReferenceSpace('viewer').then((viewerSpace) => {
+                        session.requestHitTestSource({ space: viewerSpace }).then((source) => {
+                            hitTestSource = source; // XRHitTestSource
+                        });
+                    });
+
+                    session.addEventListener('end', () => {
+                        hitTestSourceInitialized = false;
+                        hitTestSource = null;
+                    });
+
+                    // set this to true so we don't request another hit source for the rest of the session
+                    hitTestSourceInitialized = true;
                 }
-              
+
                 // 2. get hit test results
                 if (hitTestSource !== null) {
                     // we get the hit test results for a particular frame
