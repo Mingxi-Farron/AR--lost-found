@@ -78,7 +78,7 @@
             const mesh = new THREE.Mesh(geometry, material);
 
             // set the position of the mesh slightly in front of our camera z = -0.3
-            mesh.position.set(0, 0, - 0.3);
+            mesh.position.set(0, 0, -0.5);
             // then move it right in front of our click
             mesh.position.applyMatrix4(controller.matrixWorld);
             // set the mesh to face the camera
