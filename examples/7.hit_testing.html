@@ -14,12 +14,12 @@
     </div>
     <div id="console-ui">
     </div>
-    <!-- <script src="//cdn.jsdelivr.net/npm/eruda"></script>
+    <script src="//cdn.jsdelivr.net/npm/eruda"></script>
 	<script>
 		eruda.init({
 			container: document.getElementById('console-ui')
 		});
-	</script> -->
+	</script>
 
     <script type="module">
 
@@ -103,6 +103,10 @@
         function render(timestamp, frame) {
             if (frame) {
                 const session = renderer.xr.getSession(); // XRSession
+              
+                // XRReferenceSpace describes a coordiante system of type 'local-floor'
+                // read more here: https://developer.mozilla.org/en-US/docs/Web/API/XRReferenceSpace
+                const referenceSpace = renderer.xr.getReferenceSpace();
 
                 // 1. create a hit test source
                 // create a XRHitTestSource based on the viewer space
@@ -111,6 +115,8 @@
                         hitTestSource = source; // XRHitTestSource
                     });
                 });
+              
+                console.log(hitTestSource);
 
                 // 2. get hit test results
                 if (hitTestSource !== undefined) {
@@ -120,9 +126,7 @@
                     // XRHitTestResults are ordered by distance along the XRRay used to perform the hit test
                     // with the nearest in the 0th position
                     if (hitTestResults.length) {
-                        // XRReferenceSpace describes a coordiante system of type 'local-floor'
-                        // read more here: https://developer.mozilla.org/en-US/docs/Web/API/XRReferenceSpace
-                        const referenceSpace = renderer.xr.getReferenceSpace();
+                        
 
                         const hit = hitTestResults[0]; // XRHitResult
 
