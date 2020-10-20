@@ -6,6 +6,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="author" content="Irene Alvarado">
+
+<!-- <script src='../threejs/three.js'></script>
+
+<script src="../jsartoolkit5/artoolkit.min.js"></script>
+<script src="../jsartoolkit5/artoolkit.api.js"></script>
+
+<script src="../threex/threex-artoolkitsource.js"></script>
+<script src="../threex/threex-artoolkitcontext.js"></script>
+<script src="../threex/threex-arbasecontrols.js"></script>
+<script src="../threex/threex-armarkercontrols.js"></script> -->
     <link type="text/css" rel="stylesheet" href="main.css">
 </head>
 
@@ -20,7 +30,7 @@
 			container: document.getElementById('console-ui')
 		});
 	</script> -->
-
+    <canvas id="test"></canvas>
     <script type="module">
 
         import * as THREE from '../threejs/three.module.js';
@@ -30,7 +40,8 @@
         let container;
         let camera, scene, renderer;
         let controller;
-
+        let canvas;
+        let cur_frame;
         init();
         animate();
 
@@ -38,11 +49,19 @@
             container = document.createElement('div');
             document.body.appendChild(container);
 
+            canvas = document.getElementById('test');
+
             scene = new THREE.Scene();
 
             camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
 
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer = new THREE.WebGLRenderer({ 
+                antialias: true,
+                 alpha: true,
+                 canvas: canvas,
+                 //very important
+                 preserveDrawingBuffer: true 
+                });
             renderer.setPixelRatio(window.devicePixelRatio);
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.xr.enabled = true;
@@ -52,13 +71,17 @@
             light.position.set(0.5, 1, 0.25);
             scene.add(light);
 
+            const model_1 = createMeshWithImage('../model/cat.jpg');
+            model_1.position.set(0,0,-1);
+            scene.add(model_1);
+
             // add an xr controller which will help us get the position of a user click
             // from the docs: getController: "returns a Group representing the so called target ray 
             // space of the controller. Use this space for visualizing 3D objects that support the user 
             // in pointing tasks like UI interaction."
             controller = renderer.xr.getController(0);
             // call the onSelect function every time there is a 'select' event
-            controller.addEventListener('select', onSelect);
+            controller.addEventListener('select', takeScreenShot);
             scene.add(controller);
 
             document.body.appendChild(ARButton.createButton(renderer, {
@@ -70,22 +93,39 @@
             window.addEventListener('resize', onWindowResize, false);
         }
 
+        function takeScreenShot() {
+            renderer.render(scene, camera);
+            var url_1;
+            var url_2;
+            var texture_1;
+            
+            //question 1
+            url_1 = renderer.domElement.toDataURL('image/png');
+            putImageIn(url_1);
+        }
+        
         // in the webXR simulator on desktop this is done by long-pressing the right mouse click
-        function onSelect() {
-            const geometry = new THREE.CylinderBufferGeometry(0, 0.05, 0.2, 32).rotateX(Math.PI / 2);
-            const material = new THREE.MeshPhongMaterial({ color: 0xffffff * Math.random() });
-            // a mesh in three.js requires a geometry and material;
-            const mesh = new THREE.Mesh(geometry, material);
+        function putImageIn(url) {
+            const imageMesh = createMeshWithImage(url);
+            imageMesh.position.set(0,0,-1);
+            imageMesh.position.applyMatrix4(controller.matrixWorld);
+            imageMesh.quaternion.setFromRotationMatrix(controller.matrixWorld);
+            scene.add(imageMesh);
 
-            // set the position of the mesh slightly in front of our camera z = -0.3
-            mesh.position.set(0, 0, -0.5);
-            // then move it right in front of our click
-            mesh.position.applyMatrix4(controller.matrixWorld);
-            // set the mesh to face the camera
-            mesh.quaternion.setFromRotationMatrix(controller.matrixWorld);
+            // const geometry = new THREE.CylinderBufferGeometry(0, 0.05, 0.2, 32).rotateX(Math.PI / 2);
+            // const material = new THREE.MeshPhongMaterial({ color: 0xffffff * Math.random() });
+            // // a mesh in three.js requires a geometry and material;
+            // const mesh = new THREE.Mesh(geometry, material);
 
-            // add the mesh to the scene
-            scene.add(mesh);
+            // // set the position of the mesh slightly in front of our camera z = -0.3
+            // mesh.position.set(0, 0, -0.5);
+            // // then move it right in front of our click
+            // mesh.position.applyMatrix4(controller.matrixWorld);
+            // // set the mesh to face the camera
+            // mesh.quaternion.setFromRotationMatrix(controller.matrixWorld);
+
+            // // add the mesh to the scene
+            // scene.add(mesh);
         }
 
         function onWindowResize() {
@@ -99,9 +139,25 @@
             renderer.setAnimationLoop(render);
         }
 
-        function render() {
+        function render(timestamp, frame) {
+            cur_frame = frame;
             renderer.render(scene, camera);
         }
+
+        function createMeshWithImage(imagePath) {
+            const loader = new THREE.TextureLoader();
+            const material = new THREE.MeshLambertMaterial({
+                map: loader.load(imagePath),
+                side: THREE.DoubleSide
+            });
+
+            const geometry = new THREE.PlaneGeometry(0.5, 0.5);
+            const mesh = new THREE.Mesh(geometry, material);
+
+            return mesh;
+        }
+
+
     </script>
 </body>
 

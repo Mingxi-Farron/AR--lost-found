@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="author" content="Irene Alvarado">
     <link type="text/css" rel="stylesheet" href="main.css">
+    <script src="../threejs/perlin.js"></script>
 </head>
 
 <body>
@@ -27,9 +28,14 @@
         import { ARButton } from '../threejs/jsm/webxr/ARButton.js';
         import { GLTFLoader } from '../threejs/jsm/loaders/GLTFLoader.js';
 
+
         let container;
         let camera, scene, renderer;
         let reticle;
+        let sphere;
+        let controller;
+        let spheres = [];
+        let cur_hit;
 
         init();
         animate();
@@ -51,8 +57,11 @@
             var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
             light.position.set(0.5, 1, 0.25);
             scene.add(light);
+            
+            controller = renderer.xr.getController(0);
+            controller.addEventListener('select', select);
 
-            addReticleToScene();
+            
 
             document.body.appendChild(ARButton.createButton(renderer, {
                 requiredFeatures: ['hit-test'], // notice a new required feature
@@ -64,20 +73,56 @@
             window.addEventListener('resize', onWindowResize, false);
         }
 
-        function addReticleToScene() {
-            const geometry = new THREE.RingBufferGeometry(0.15, 0.2, 32).rotateX(- Math.PI / 2);
-            const material = new THREE.MeshBasicMaterial();
+        function select () {
+            addTraceToScene();
+        }
 
-            reticle = new THREE.Mesh(geometry, material);
+        function addTraceToScene() {
+            var sphere_geometry = new THREE.SphereGeometry(0.1, 32, 32);
+            var material = new THREE.MeshNormalMaterial();
 
-            // we will calculate the position and rotation of this reticle every frame manually
-            // in the render() function so matrixAutoUpdate is set to false
-            reticle.matrixAutoUpdate = false;
-            reticle.visible = false; // we start with the reticle not visible
-            scene.add(reticle);
+            // var sphere_geometry = new THREE.BoxGeometry( 1, 1, 1 );
+            // var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
 
-            // optional axis helper you can add to an object
-            reticle.add(new THREE.AxesHelper(1));
+            var sphere = new THREE.Mesh(sphere_geometry, material);
+            sphere.visible = true; // we start with the reticle not visible
+            //sphere.position.set(0,0,0);
+
+
+            //critical
+            sphere.matrixAutoUpdate = false;
+
+            //give the sphere a matrix update
+            sphere.matrix.fromArray(cur_hit);
+            // sphere.matrix.elements[0] = sphere.matrix.elements[0]*0.1;
+            // sphere.matrix.elements[5] = sphere.matrix.elements[5]*0.1;
+            // sphere.matrix.elements[10] = sphere.matrix.elements[10]*0.1;
+            //sphere.updateMatrix();
+            scene.add(sphere);
+             
+
+            console.log(sphere);
+
+            spheres.push(sphere);
+            
+        }
+
+        function update(sphere) {
+            // change '0.003' for more aggressive animation
+            var time = performance.now() * 0.003;
+            //console.log(time)
+
+            //go through vertices here and reposition them
+            
+            // change 'k' value for more spikes
+            var k = 3;
+            for (var i = 0; i < sphere.geometry.vertices.length; i++) {
+                var p = sphere.geometry.vertices[i];
+                p.normalize().multiplyScalar(1 + 0.3 * noise.perlin3(p.x * k + time, p.y * k, p.z * k));
+            }
+            sphere.geometry.computeVertexNormals();
+            sphere.geometry.normalsNeedUpdate = true;
+            sphere.geometry.verticesNeedUpdate = true;
         }
 
         function onWindowResize() {
@@ -88,7 +133,14 @@
         }
 
         function animate() {
+            if(spheres.length != 0){
+                for(var i = 0; i < spheres.length ; i ++){
+                    update(spheres[i]);
+                }   
+            }
+            
             renderer.setAnimationLoop(render);
+            requestAnimationFrame(animate);
         }
 
         // read more about hit testing here:
@@ -148,8 +200,7 @@
                         const transformationMatrix = relativePose.transform.matrix;
 
                         // we apply that transformation information to our reticle shape
-                        reticle.visible = true; // make it visible
-                        reticle.matrix.fromArray(transformationMatrix);
+                        cur_hit = transformationMatrix;
                     }
                 }
 

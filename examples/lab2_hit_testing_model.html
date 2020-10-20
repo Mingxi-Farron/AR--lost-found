@@ -68,20 +68,15 @@
             // TODO: load your desired model
             loader = new GLTFLoader();
             loader.load(
-                '../model/YOUR_MODEL',
+                '../model/Spotted-Jelly.gltf',
                 (gltf) => {
                     model = gltf.scene;
+                    
+                    model.visible = false;
+                    model.matrixAutoUpdate = false;
+                    //model.position.set(0,0,-5);
 
-                    // HINT if you want to load the model the first time and set it's visibility to true
-                    // you can do it just to test that the model is loading correctly. You can also use
-                    // the three.js editor to check the model's default position in the scene
-                    // https://threejs.org/editor/
-
-                    // TODO: set the model visibility to false
-                    // one line of code
-
-                    // TODO: add the model to the scene (will be invisible)
-                    // one line of code
+                    scene.add(model);
                 },
                 undefined,
                 (error) => {
@@ -109,7 +104,10 @@
             if (reticle.visible) {
                 // TODO: set the model to visible now that user has clicked on screen
                 // one line of code
-
+                model.visible = true;
+                
+                model.matrix = model.matrix.copy(reticle.matrix);
+                console.log(reticle.matrix);
                 // TODO: set the model position based on the reticle matrix
                 // one line of code
             }
@@ -175,6 +173,7 @@
                         const transformationMatrix = relativePose.transform.matrix;
 
                         reticle.visible = true;
+                        //console.log(transformationMatrix);
                         reticle.matrix.fromArray(transformationMatrix);
                     }
                 }
