@@ -17,6 +17,7 @@ init();
 animate();
 
 function init() {
+    //initializations
     var init_data = standard_init(THREE,ARButton);
     container = init_data[0];
     scene = init_data[1];
@@ -27,13 +28,18 @@ function init() {
 
 
     addReticleToScene();
+
     //customized 
     controller.addEventListener('select', select);
 }
 
+//each time the user taps the screen
 function select () {
+    //first create a image model
+    //then add it to the scene
     addTraceToScene( createImageWithMesh('../model/cat.jpg') );
 }
+
 
 function createImageWithMesh(url) {
     const texture_loader = new THREE.TextureLoader();
@@ -46,6 +52,64 @@ function createImageWithMesh(url) {
     const mesh = new THREE.Mesh(geometry, material);
     return mesh;
 }
+
+
+function addTraceToScene(input_model) {
+    //critical
+    input_model.matrixAutoUpdate = false;
+    //give the sphere a matrix update
+    input_model.matrix = input_model.matrix.copy(reticle.matrix);
+
+    /********************************************BUG HERE**************************************************** */
+
+    //In the previous example, I created a model of sphere
+    //Something like:
+        // var sphere_geometry = new THREE.SphereGeometry(1, 128, 128);
+        // var material = new THREE.MeshNormalMaterial();
+        // var sphere = new THREE.Mesh(sphere_geometry, material);
+    //I have used scale function to transform matrix to scale the sphere. 
+    //However, it is not working consistently.
+    //Therefore, after checking each entry in the matrix, I directly manipulate the scale entries in matrix.
+    //Still, it is also not working consistently.
+
+    // sphere.matrix.elements[0] = sphere.matrix.elements[0]*0.1;
+    // sphere.matrix.elements[5] = sphere.matrix.elements[5]*0.1;
+    // sphere.matrix.elements[10] = sphere.matrix.elements[10]*0.1;
+    //sphere.updateMatrix();
+
+    scene.add(input_model);
+    console.log(input_model);
+    spheres.push(input_model);
+}
+
+//to animate the models in the scene
+function update(sphere) {
+
+    var time = performance.now() * 0.003;
+
+    //go through vertices here and reposition them
+    // change 'k' value for more spikes
+    var k = 3;
+    for (var i = 0; i < sphere.geometry.vertices.length; i++) {
+        var p = sphere.geometry.vertices[i];
+        p.normalize().multiplyScalar(1 + 0.3 * noise.perlin3(p.x * k + time, p.y * k, p.z * k));
+    }
+    sphere.geometry.computeVertexNormals();
+    sphere.geometry.normalsNeedUpdate = true;
+    sphere.geometry.verticesNeedUpdate = true;
+}
+
+//for each model, run the update function for them
+function animate() {
+    if(spheres.length != 0){
+        for(var i = 0; i < spheres.length ; i ++){
+            update(spheres[i]);
+        }   
+    }
+    renderer.setAnimationLoop(render);
+    requestAnimationFrame(animate);
+}
+
 
 function addReticleToScene() {
     const geometry = new THREE.RingBufferGeometry(0.15, 0.2, 32).rotateX(- Math.PI / 2);
@@ -61,53 +125,6 @@ function addReticleToScene() {
 
     // optional axis helper you can add to an object
     reticle.add(new THREE.AxesHelper(1));
-}
-
-
-function addTraceToScene(input_model) {
-    //critical
-    input_model.matrixAutoUpdate = false;
-    //give the sphere a matrix update
-    input_model.matrix = input_model.matrix.copy(reticle.matrix);
-    // sphere.matrix.elements[0] = sphere.matrix.elements[0]*0.1;
-    // sphere.matrix.elements[5] = sphere.matrix.elements[5]*0.1;
-    // sphere.matrix.elements[10] = sphere.matrix.elements[10]*0.1;
-    //sphere.updateMatrix();
-    scene.add(input_model);
-    console.log(input_model);
-    spheres.push(input_model);
-}
-
-
-function update(sphere) {
-    // change '0.003' for more aggressive animation
-    var time = performance.now() * 0.003;
-    //console.log(time)
-
-    //go through vertices here and reposition them
-    
-    // change 'k' value for more spikes
-    var k = 3;
-    for (var i = 0; i < sphere.geometry.vertices.length; i++) {
-        var p = sphere.geometry.vertices[i];
-        p.normalize().multiplyScalar(1 + 0.3 * noise.perlin3(p.x * k + time, p.y * k, p.z * k));
-    }
-    sphere.geometry.computeVertexNormals();
-    sphere.geometry.normalsNeedUpdate = true;
-    sphere.geometry.verticesNeedUpdate = true;
-}
-
-
-
-function animate() {
-    if(spheres.length != 0){
-        for(var i = 0; i < spheres.length ; i ++){
-            update(spheres[i]);
-        }   
-    }
-    
-    renderer.setAnimationLoop(render);
-    requestAnimationFrame(animate);
 }
 
 // read more about hit testing here:
